@@ -301,29 +301,23 @@ STATIC void mach_uart_print(const mp_print_t *print, mp_obj_t self_in, mp_print_
         }
         if (self->invert) {
             mp_printf(print, ", invert=");
-            uint32_t invert_mask = self->invert;
-            if (invert_mask & UART_INVERSE_TXD) {
+            char *prequel = "";
+            if (self->invert & UART_INVERSE_TXD) {
                 mp_print_str(print, "INV_TX");
-                invert_mask &= ~UART_INVERSE_TXD;
-                if (invert_mask) {
-                    mp_print_str(print, "|");
-                }
+                prequel = "|";
             }
-            if (invert_mask & UART_INVERSE_RXD) {
+            if (self->invert & UART_INVERSE_RXD) {
+                mp_print_str(print, prequel);
                 mp_print_str(print, "INV_RX");
-                invert_mask &= ~UART_INVERSE_RXD;
-                if (invert_mask) {
-                    mp_print_str(print, "|");
-                }
+                prequel = "|";
             }
-            if (invert_mask & UART_INVERSE_RTS) {
+            if (self->invert & UART_INVERSE_RTS) {
+                mp_print_str(print, prequel);
                 mp_print_str(print, "INV_RTS");
-                invert_mask &= ~UART_INVERSE_RTS;
-                if (invert_mask) {
-                    mp_print_str(print, "|");
-                }
+                prequel = "|";
             }
-            if (invert_mask & UART_INVERSE_CTS) {
+            if (self->invert & UART_INVERSE_CTS) {
+                mp_print_str(print, prequel);
                 mp_print_str(print, "INV_CTS");
             }
         }
