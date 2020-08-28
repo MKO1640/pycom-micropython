@@ -61,6 +61,7 @@
 #include "machuart.h"
 #include "machtimer.h"
 #include "machine_i2c.h"
+#include "machine_i2s.h"
 #include "machspi.h"
 #include "machpwm.h"
 #include "machrtc.h"
@@ -184,6 +185,14 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_0(machine_idle_obj, machine_idle);
 STATIC mp_obj_t machine_sleep (uint n_args, const mp_obj_t *arg) {
 
     bool reconnect = false;
+    int64_t sleep_time = 1000; // Safe default value, just to silence compiler warnings
+    
+    if (n_args > 0) {
+        sleep_time = (int64_t)mp_obj_get_int_truncated(arg[0]) * 1000;
+        if (sleep_time <= 0) {
+            return mp_const_none;
+        }
+    }
 
 #if defined(FIPY) || defined(GPY)
     if (lteppp_modem_state() < E_LTE_MODEM_DISCONNECTED) {
@@ -207,7 +216,6 @@ STATIC mp_obj_t machine_sleep (uint n_args, const mp_obj_t *arg) {
     }
     else
     {
-        int64_t sleep_time = (int64_t)mp_obj_get_int_truncated(arg[0]) * 1000;
         struct timeval tv;
         gettimeofday(&tv, NULL);
         mach_expected_wakeup_time = (int64_t)((tv.tv_sec * 1000000ull) + tv.tv_usec) + sleep_time;
@@ -410,6 +418,7 @@ STATIC const mp_rom_map_elem_t machine_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_UART),                    (mp_obj_t)&mach_uart_type },
     { MP_OBJ_NEW_QSTR(MP_QSTR_SPI),                     (mp_obj_t)&mach_spi_type },
     { MP_OBJ_NEW_QSTR(MP_QSTR_I2C),                     (mp_obj_t)&machine_i2c_type },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_I2S),                     (mp_obj_t)&machine_i2s_type },
     { MP_OBJ_NEW_QSTR(MP_QSTR_PWM),                     (mp_obj_t)&mach_pwm_timer_type },
     { MP_OBJ_NEW_QSTR(MP_QSTR_ADC),                     (mp_obj_t)&pyb_adc_type },
     { MP_OBJ_NEW_QSTR(MP_QSTR_DAC),                     (mp_obj_t)&pyb_dac_type },

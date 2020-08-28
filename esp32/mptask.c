@@ -534,7 +534,7 @@ STATIC void mptask_init_sflash_filesystem_littlefs(void) {
     MP_STATE_PORT(vfs_cur) = vfs;
 
     //Initialize the current working directory (cwd)
-    vfs_littlefs->fs.littlefs.cwd = (char*)malloc(2);
+    vfs_littlefs->fs.littlefs.cwd = (char*)pvPortMalloc(2);
     vfs_littlefs->fs.littlefs.cwd[0] = '/';
     vfs_littlefs->fs.littlefs.cwd[1] = '\0';
 
