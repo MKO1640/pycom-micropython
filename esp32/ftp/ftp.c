@@ -359,6 +359,7 @@ STATIC FRESULT f_readdir_helper(ftp_dir_t *dp, ftp_fileinfo_t *fno ) {
                     fno->u.fpinfo_lfs.timestamp.ftime = 0;
                 }
                 vPortFree(file_relative_path);
+            }
         xSemaphoreGive(littlefs->mutex);
         return lfsErrorToFatFsError(lfs_ret);
     }
